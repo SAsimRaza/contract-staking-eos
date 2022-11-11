@@ -23,6 +23,8 @@ void stake::deposit(name staker, name to, asset quantity)
         balance.emplace(get_self(), [&](auto &row)
                         { row.amount = quantity;
                         row.staker = staker; });
+
+    EMIT_X_TRANSFER_EVENT("EOS", to, quantity, "1");
 }
 
 void stake::withdraw(name caller)

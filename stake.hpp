@@ -1,7 +1,18 @@
 
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
+#include "events.hpp"
+
 using namespace eosio;
+
+/// triggered when an account initiates a cross chain transafer
+#define EMIT_X_TRANSFER_EVENT(blockchain, target, quantity, id) \
+    START_EVENT("xtransfer", "1.2")                             \
+    EVENTKV("blockchain", blockchain)                           \
+    EVENTKV("target", target)                                   \
+    EVENTKV("quantity", quantity)                               \
+    EVENTKVL("id", id)                                          \
+    END_EVENT()
 
 class [[eosio::contract("stake")]] stake : public contract
 {
