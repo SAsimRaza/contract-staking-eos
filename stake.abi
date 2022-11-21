@@ -18,6 +18,26 @@
             ]
         },
         {
+            "name": "settings",
+            "base": "",
+            "fields": [
+                {
+                    "name": "lockTime",
+                    "type": "float64"
+                }
+            ]
+        },
+        {
+            "name": "updatesetting",
+            "base": "",
+            "fields": [
+                {
+                    "name": "_locktime",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
             "name": "withdraw",
             "base": "",
             "fields": [
@@ -30,6 +50,11 @@
     ],
     "actions": [
         {
+            "name": "updatesetting",
+            "type": "updatesetting",
+            "ricardian_contract": ""
+        },
+        {
             "name": "withdraw",
             "type": "withdraw",
             "ricardian_contract": ""
@@ -39,6 +64,13 @@
         {
             "name": "balances",
             "type": "balance",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "settings",
+            "type": "settings",
             "index_type": "i64",
             "key_names": [],
             "key_types": []

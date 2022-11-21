@@ -2,17 +2,14 @@
 
 void stake::deposit(name staker, name to, asset quantity)
 {
+
     print("Amount Deposited");
     check(quantity.amount > 0, "Should greater than 0");
 
     if (staker == get_self() || to != get_self())
     {
-        print("exit");
         return;
     }
-    check(quantity.amount > 0, "When pigs fly");
-    // check(quantity.symbol == token_symbol, "These are not the droids you are looking for.");
-
     balances balance(get_self(), staker.value);
     auto itr = balance.find(staker.value);
 
@@ -31,6 +28,19 @@ void stake::withdraw(name caller)
 {
     require_auth(caller);
 
+    uint64_t value;
+
+    if (settings_instance.exists())
+    {
+        value = settings_instance.get().lockTime;
+    }
+    else
+    {
+        value = 0;
+    }
+
+    check(value < current_time_point().sec_since_epoch(), "time not passed");
+
     balances balance(get_self(), caller.value);
     auto itr = balance.find(caller.value);
 
@@ -44,4 +54,15 @@ void stake::withdraw(name caller)
         .send();
 
     balance.erase(itr);
+}
+
+void stake::updatesetting(uint64_t _locktime)
+{
+    require_auth(get_self());
+
+    auto current_setting = settings_instance.get_or_create(get_self(), default_settings);
+
+    current_setting.lockTime = _locktime;
+
+    settings_instance.set(current_setting, get_self());
 }

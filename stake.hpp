@@ -1,6 +1,7 @@
 
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
+#include <eosio/singleton.hpp>
 #include "events.hpp"
 
 using namespace eosio;
@@ -21,9 +22,10 @@ public:
     using contract::contract;
 
     // Use the base class constructor.
-    stake(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds), token_symbol("ASA", 4)
-    {
-    }
+    stake(name receiver, name code, datastream<const char *> ds) : contract(receiver, code, ds),
+                                                                   token_symbol("SYS", 4),
+                                                                   settings_instance(receiver, receiver.value){};
+
     struct [[eosio::table]] balance
     {
         name staker;
@@ -33,11 +35,21 @@ public:
     };
     typedef eosio::multi_index<"balances"_n, balance> balances;
 
+    struct [[eosio::table]] settings
+    {
+        double lockTime;
+    } default_settings;
+
+    typedef singleton<"settings"_n, settings> settings_singleton;
+    settings_singleton settings_instance;
+
     // Declare class method.
     [[eosio::on_notify("eosio.token::transfer")]] void
     deposit(name staker, name to, asset quantity);
 
     [[eosio::action]] void withdraw(name caller);
+
+    [[eosio::action]] void updatesetting(uint64_t _locktime);
 
 private:
     const symbol token_symbol;
